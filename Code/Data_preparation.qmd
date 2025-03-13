@@ -1,0 +1,41 @@
+---
+title: "Data Preparation"
+author: "Evelyn Albrecht"
+format: html
+editor: visual
+---
+
+# Setting Up 
+
+### Clearing R's environment 
+
+```{r}
+rm(list=ls())
+```
+
+### Loading relevant packages 
+
+```{r}
+library(tidyverse) #bunch of packages combined to be one 
+library(here) #assists in importing data sets 
+library(vegan) #allows one to rotate data
+library(ggplot2) #for plotting data 
+```
+
+# Data Clean-up 
+
+## Road Data 
+
+Import the data
+
+## Water Bodies Data 
+
+I may or may not use this data set. I am realizing taking a second look in ArcGISpro that some of the water bodies is not identifiable on it.
+
+## Landuse Data 
+
+### Changing column names 
+
+### Rotating 
+
+# Joining Datasets

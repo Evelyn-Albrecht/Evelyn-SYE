@@ -14,6 +14,10 @@ rm(list=ls())
 source("TEAM library 1.7.R")
 library(chron) 
 library(reshape)
+
+library(tidyverse)
+library(lubridate)
+library(hms)
 library(tidyverse)\
 library(lubridate)
 library(hms)
@@ -69,6 +73,8 @@ data$End.Date <- mdy(data$End.Date)
 data$Photo.Date <- mdy(data$Photo.Date)
 data$Photo.Time <- as_hms(data$td.photo)
 ```
+
+
 
 ## Descriptive analysis
 
@@ -217,6 +223,13 @@ mat<-f.matrix.creator1(data) # list of matrices camera x days for each species
 NAI<-naive(mat) # get naive occupancy for each species
 
 
+#write.table(naive_occu_2009, file="naive_occu_2009.txt",quote=F, sep="\t",row.names = F)
+
+```
+
+##Plotting
+Retrofit their acc.curve function to match with f.matrix.creator1
+
 
 #write.table(naive_occu_2009, file="naive_occu_2009.txt",quote=F, sep="\t",row.names = F)
 
@@ -264,6 +277,22 @@ ggplot(accumulation, aes(x=Camera.trap.days, y=species)) +
 ```
 
 ### Works to here
+Need to fix their events.hours function. Here's the code to tweak:
+
+```{r}
+# the function returns the matrix species by hours to be used for activity profile (it uses all the available years)
+events.hours <- function(dtaframe) {
+    require(reshape)
+    require(chron)
+    dtaframe$ore <- trunc(dtaframe$Photo.Time, "hours")
+    selvar <- subset(dtaframe, select = c(Sampling.Unit.Name, Photo.Date, bin, ore))
+    ev.hr <- unique(selvar)
+    ev.hr <- ev.hr %>% rename(value = ore)
+    ev.sp <- cast(ev.hr, value ~ bin, length)
+    colnames(ev.sp) <- sub(" ", ".", colnames(ev.sp))
+    return(ev.sp)
+}
+```
 
 Need to fix their events.hours function. Here's the code to tweak:
 
@@ -291,7 +320,8 @@ activity_24h<-events.hours(data)
 write.table(activity_24h, file="events_24hour_2020.txt",quote=F, sep="\t",row.names = F)
 
 
-activity_24h<-events.hours(data)
+ativity_24h<-events.hours(data)
+
 
 # example of plotting activity pattern of selected species (3 species; porcupine, fisher, snowshoehare)
 clock<-c(0:23) 
@@ -301,6 +331,7 @@ par(mfrow=c(1,3),cex.lab=0.5, cex.axis=0.5)
 clock24.plot(activity_24h$PORCUPINE,clock,show.grid=T,lwd=2,line.col="green", main="Porcupine")
 clock24.plot(activity_24h$FISHER,clock,show.grid=T,lwd=2,line.col="blue", main="Fisher")
 clock24.plot(activity_24h$SNOWSHOEHARE,clock,show.grid=T,lwd=2,line.col="red", main="Snowshoe hare")
+
 ```
 
 Getting rid of mapping as camera locations not in data
@@ -321,11 +352,18 @@ events.hours <- function(dtaframe) {
 }
 ```
 
+Getting rid of mapping as camera locations not in data
+
+
 # Chapter 6
 
 ## loading in data
 
+
+basically recapping stuff from chapter 5
+Let's clean up
 basically recapping stuff from chapter 5 Let's clean up
+
 
 ```{r}
 rm(list = ls())
@@ -345,6 +383,9 @@ library(AICcmodavg)
 #library(MuMIn)
 #library(plyr) # included in tidyverse
 #library(R2jags)
+```
+
+
 
 
 data1<- read.csv(here("Data","Pre_2020_cam_data.csv"))
@@ -440,6 +481,7 @@ repeat the steps for preparing the data
 
 Need column called Start.Date and End.Date in yr2009 that is POSIXct and also need genus species in a column called bin
 
+Need column called Start.Date and End.Date in yr2009 that is POSIXct and also need genus species in a column called bin
 ```{r}
 yr2009$Start.Date <-as_date(ymd_hms(yr2009$Camera.Start.Date.and.Time))
 yr2009$End.Date <- as_date(ymd_hms(yr2009$Camera.End.Date.and.Time))
@@ -456,6 +498,7 @@ names(mat.cams) # each species has its own table
 naivetable<-naive(mat.cams) 
 naivetable
 ```
+
 
 ##WORKING TO HERE WITH THEIR CODE
 
